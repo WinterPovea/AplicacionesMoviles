@@ -6,7 +6,8 @@ class LocalTaskRepository implements TaskRepository {
     const Task(
       id: 101,
       title: 'Configurar repositorio Git',
-      description: 'Inicializar rama principal y subir estructura base de Flutter',
+      description:
+          'Inicializar rama principal y subir estructura base de Flutter',
       priority: 'Alta',
       isCompleted: true,
       userId: 1,
@@ -14,7 +15,8 @@ class LocalTaskRepository implements TaskRepository {
     const Task(
       id: 102,
       title: 'Definir modelo Task y JSON',
-      description: 'Implementar constructor const y factory fromJson en task.dart',
+      description:
+          'Implementar constructor const y factory fromJson en task.dart',
       priority: 'Alta',
       isCompleted: true,
       userId: 1,
@@ -38,7 +40,8 @@ class LocalTaskRepository implements TaskRepository {
     const Task(
       id: 105,
       title: 'Preparar formulario de creación',
-      description: 'Maquetar campos de título, descripción y selector de prioridad',
+      description:
+          'Maquetar campos de título, descripción y selector de prioridad',
       priority: 'Baja',
       isCompleted: false,
       userId: 1,
@@ -46,7 +49,7 @@ class LocalTaskRepository implements TaskRepository {
   ];
 
   @override
-  List<Task> getTasks() => List.unmodifiable(_tasks);
+  Future<List<Task>> getTasks() async => List.unmodifiable(_tasks);
 
   @override
   void save(Task task) {

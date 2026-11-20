@@ -4,14 +4,30 @@ import '../data/task_repository.dart';
 import '../domain/task.dart';
 
 class TasksViewModel extends ChangeNotifier {
-  TasksViewModel(TaskRepository repository)
-    : _repository = repository,
-      _tasks = repository.getTasks();
+  TasksViewModel(this._repository);
 
   final TaskRepository _repository;
-  List<Task> _tasks;
+  List<Task> _tasks = [];
+  bool isLoading = false;
+  String? errorMessage;
 
   List<Task> get tasks => List.unmodifiable(_tasks);
+
+  Future<void> loadTasks() async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      _tasks = await _repository.getTasks();
+    } catch (error) {
+      errorMessage = 'No se pudieron cargar las tareas.';
+      debugPrint('Error al cargar tareas: $error');
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 
   Task? findTask(int? id) {
     if (id == null) return null;
@@ -25,8 +41,12 @@ class TasksViewModel extends ChangeNotifier {
     final current = findTask(id);
     if (current == null) return;
 
-    _repository.save(current.copyWith(isCompleted: !current.isCompleted));
-    _tasks = _repository.getTasks();
+    final updated = current.copyWith(isCompleted: !current.isCompleted);
+    _repository.save(updated);
+    _tasks = [
+      for (final task in _tasks)
+        if (task.id == id) updated else task,
+    ];
     notifyListeners();
   }
 }
