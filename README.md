@@ -65,3 +65,14 @@ DELETE /tasks/:id eliminar tarea
 - **Campos recibidos desde la API:** `id` (entero), `userId` (entero), `title` (cadena de texto) y `completed` (booleano, mapeado a `isCompleted` en el modelo `Task`).
 - **Valores completados por defecto en TaskFlow:** Como JSONPlaceholder no provee descripción ni prioridad, `Task.fromJson` asigna `'Sin descripción (API)'` a `description` y `'Sin prioridad (API)'` a `priority`.
 - **Persistencia local temporal:** Marcar o desmarcar una tarea como completada ejecuta `save()` sobre una copia en memoria dentro de `RemoteTaskRepository`. JSONPlaceholder es una API de solo lectura para esta práctica, por lo que al reiniciar la aplicación las tareas vuelven a su estado remoto original.
+
+---
+
+## Manejo de Estados Asíncronos (Sesión 8)
+
+La pantalla principal (`TaskListScreen`) gestiona de forma reactiva cuatro estados derivados de `TasksViewModel` mediante `ChangeNotifier`:
+
+1. **Estado de carga (`isLoading == true`):** Se activa automáticamente al iniciar la aplicación o al invocar `loadTasks()` desde el botón de la barra superior o el gesto *pull-to-refresh* (`RefreshIndicator`). Muestra un `CircularProgressIndicator` con mensaje de sincronización.
+2. **Estado de éxito (lista poblada):** Se muestra cuando la petición HTTP 200 devuelve elementos válidos. Renderiza un `ListView.builder` con `AlwaysScrollableScrollPhysics()` para permitir deslizar hacia abajo y refrescar incluso si hay pocos elementos.
+3. **Estado de error (`errorMessage != null`):** Provocado al desactivar la conexión a internet (Modo Avión) antes de solicitar una actualización. Dio captura la excepción de red y la vista presenta el mensaje de fallo junto al botón **Reintentar**, que permite recuperar los datos al restablecer la red sin reiniciar la aplicación.
+4. **Estado vacío (`isEmpty == true`):** Provocado configurando temporalmente `userId = 9999` en `TaskApiService`. El servidor responde con HTTP 200 y un arreglo vacío `[]`; la interfaz diferencia este caso de un error mostrando el icono de bandeja vacía y el botón **Actualizar**.
