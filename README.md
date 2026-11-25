@@ -76,3 +76,13 @@ La pantalla principal (`TaskListScreen`) gestiona de forma reactiva cuatro estad
 2. **Estado de éxito (lista poblada):** Se muestra cuando la petición HTTP 200 devuelve elementos válidos. Renderiza un `ListView.builder` con `AlwaysScrollableScrollPhysics()` para permitir deslizar hacia abajo y refrescar incluso si hay pocos elementos.
 3. **Estado de error (`errorMessage != null`):** Provocado al desactivar la conexión a internet (Modo Avión) antes de solicitar una actualización. Dio captura la excepción de red y la vista presenta el mensaje de fallo junto al botón **Reintentar**, que permite recuperar los datos al restablecer la red sin reiniciar la aplicación.
 4. **Estado vacío (`isEmpty == true`):** Provocado configurando temporalmente `userId = 9999` en `TaskApiService`. El servidor responde con HTTP 200 y un arreglo vacío `[]`; la interfaz diferencia este caso de un error mostrando el icono de bandeja vacía y el botón **Actualizar**.
+
+---
+
+## Formulario de Nueva Tarea (Sesión 9)
+
+Se implementó la pantalla `TaskFormScreen` accesible desde la ruta `/new` mediante el botón flotante **Nueva tarea**:
+
+- **Validación con `Form` y `GlobalKey<FormState>`:** Exige un título no vacío de al menos 3 caracteres y muestra mensajes descriptivos en español ante entradas inválidas.
+- **Controladores y estado local:** Gestiona `TextEditingController` para título y descripción (liberados en `dispose()`), un `DropdownButtonFormField` para prioridad (`Alta`, `Media`, `Baja`) y un selector de fecha opcional mediante `showDatePicker`.
+- **Retorno de borrador (`TaskDraft`):** Al guardar un formulario válido, `context.pop(draft)` devuelve los datos a `TaskListScreen` para confirmarlos en un `SnackBar` sin simular persistencia remota. El botón **Cancelar** regresa sin emitir mensaje.
